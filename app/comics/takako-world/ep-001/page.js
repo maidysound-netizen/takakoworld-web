@@ -1,0 +1,2 @@
+const pages=['ta-1.png','ta-2.png','ta-3.png'];
+export default function Episode(){return <main className="reader"><div className="readerTop"><a href="/comics">← COMICS</a><div><strong>TAKAKO WORLD</strong><span>EP.001 · WORK IN PROGRESS</span></div></div><section className="strip">{pages.map((p,i)=><img key={p} src={`/comics/takako-world/ep-001/${p}`} loading={i===0?'eager':'lazy'} alt={`Takako World episode preview ${i+1}`}/>)}</section><div className="readerEnd"><p>TO BE CONTINUED</p><a href="/comics">← Back to episodes</a></div></main>}
