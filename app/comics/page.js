@@ -1,0 +1,1 @@
+export default function Comics(){return <main className="page"><p className="eyebrow">SERIAL COMICS</p><h1>COMICS</h1><a className="feature" href="/comics/takako-world/ep-001"><div><span className="pill">IN PRODUCTION</span><h2>Takako World</h2><p>EP.001 Preview · long-scroll webtoon reader</p></div><b>READ →</b></a></main>}
