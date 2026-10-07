@@ -20,6 +20,7 @@ export default function ComicEditor() {
   const [tool, setTool] = useState("dialogue");
   const stageRef = useRef(null);
   const importRef = useRef(null);
+  const [cloudStatus, setCloudStatus] = useState("");
 
   useEffect(() => {
     const saved = localStorage.getItem("takako-comic-editor-" + episode.slug);
@@ -152,6 +153,10 @@ export default function ComicEditor() {
     URL.revokeObjectURL(url);
   }
 
+  function inlineLang(box) {
+    return box.type === "sfx" && box.universal ? "ko" : previewLang;
+  }
+
   function renderText(box) {
     if (box.type === "sfx" && box.universal) return box.text.ko || "SFX";
     return box.text[previewLang] || box.text.ko || (box.type === "sfx" ? "SFX" : "대사 입력");
@@ -217,18 +222,37 @@ export default function ComicEditor() {
         <button className="dangerButton" onClick={removeCurrent}>DELETE {current.type === "sfx" ? "SFX" : "DIALOGUE"}</button>
       </div> : <p className="editorHint">{tool==="sfx"?"효과음을 넣을 위치를 클릭하세요.":"말풍선 안을 클릭하세요."}</p>}
 
+      <div className="cloudButtons"><button onClick={saveCloud}>SAVE DRAFT</button><button onClick={loadCloud}>LOAD DRAFT</button></div>
+      {cloudStatus && <p className="cloudStatus">{cloudStatus}</p>}
+      <input ref={importRef} className="jsonFileInput" type="file" accept=".json,application/json" onChange={importJSONFile} />
+      <button className="importButton" onClick={()=>importRef.current?.click()}>IMPORT LETTERING JSON</button>
       <button className="exportButton" onClick={exportJSON}>EXPORT LETTERING JSON</button>
-      <small>대사와 효과음은 브라우저에 자동 저장됩니다. EXPORT는 통합 lettering JSON을 저장합니다.</small>
+      <small>선택한 자막은 이미지 위에서 바로 타이핑할 수 있습니다. 브라우저 자동 저장 + Supabase Draft + JSON 백업을 함께 사용합니다.</small>
     </aside>
 
     <section className="editorWorkspace">
       <div className="editorToolbar"><b>{episode.slug.toUpperCase()}</b><span>{imageBoxes.filter(b=>b.type!=="sfx").length} dialogue · {imageBoxes.filter(b=>b.type==="sfx").length} SFX · {previewLang.toUpperCase()}</span></div>
       <div className="editorStage" ref={stageRef} onClick={addBox}>
         <img src={episodeImagePath(episode, image)} alt={image} draggable="false" />
-        {imageBoxes.map((box) => <div key={box.id}
-          className={"editorBox "+(box.type==="sfx"?"sfxBox ":"dialogueBox ")+(selected===box.id?"selected":"")}
-          style={boxStyle(box)} onPointerDown={(e)=>moveBox(e,box.id)}
-        >{renderText(box)}</div>)}
+        {imageBoxes.map((box) => {
+          const editing = selected === box.id;
+          const lang = inlineLang(box);
+          return <div key={box.id}
+            className={"editorBox "+(box.type==="sfx"?"sfxBox ":"dialogueBox ")+(editing?"selected":"")}
+            style={boxStyle(box)} onPointerDown={(e)=>moveBox(e,box.id)}
+          >
+            {editing ? <textarea
+              className="inlineLetteringInput"
+              aria-label={"Edit "+lang.toUpperCase()+" lettering"}
+              value={box.text[lang] || ""}
+              placeholder={box.type==="sfx" ? "SFX 입력" : "대사 입력"}
+              onPointerDown={(e)=>e.stopPropagation()}
+              onClick={(e)=>e.stopPropagation()}
+              onChange={(e)=>updateText(lang,e.target.value)}
+              autoFocus
+            /> : renderText(box)}
+          </div>;
+        })}
       </div>
     </section>
   </main>;
