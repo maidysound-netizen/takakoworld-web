@@ -1,2 +1,3 @@
-# takakoworld-web
-takakoworld 서비스 사이트를 만들고 있습니다.
+# TAKAKO WORLD
+
+Next.js based content hub for comics, novels, games, music and fortune.
