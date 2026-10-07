@@ -17,7 +17,7 @@ export default function ComicEditor() {
   const [selected, setSelected] = useState(null);
   const [previewLang, setPreviewLang] = useState("ko");
   const [tool, setTool] = useState("dialogue");
-  const stageRef = useRef(null);
+  const stageRef = useRef(null);\n  const importRef = useRef(null);
 
   useEffect(() => {
     const saved = localStorage.getItem("takako-comic-editor-" + episode.slug);
@@ -89,6 +89,30 @@ export default function ComicEditor() {
     if (!selected) return;
     persist(boxes.filter((b) => b.id !== selected)); setSelected(null);
   }
+  function importJSONFile(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(String(reader.result));
+        if (!Array.isArray(parsed)) throw new Error("JSON must be an array");
+        const valid = parsed.every((b) => b && typeof b.id === "string" && (b.type === "dialogue" || b.type === "sfx") && typeof b.image === "string" && b.position && b.text);
+        if (!valid) throw new Error("Invalid lettering data");
+        persist(parsed);
+        setSelected(null);
+        const firstImage = parsed.find((b) => episode.images.includes(b.image))?.image;
+        if (firstImage) setImage(firstImage);
+        alert("IMPORT COMPLETE · " + parsed.length + " items");
+      } catch (err) {
+        alert("IMPORT FAILED · 올바른 lettering JSON인지 확인하세요.");
+      } finally {
+        e.target.value = "";
+      }
+    };
+    reader.readAsText(file);
+  }
+
   function exportJSON() {
     const payload = JSON.stringify(boxes, null, 2);
     navigator.clipboard?.writeText(payload);
