@@ -44,3 +44,6 @@
 .miniButtons{display:flex;gap:5px;flex-wrap:wrap;margin-top:12px}.miniButtons button{font-size:9px;padding:7px 8px}
 .checkLabel{display:flex!important;align-items:flex-start;gap:8px;line-height:1.35}.checkLabel input{margin-top:2px}
 .sfxControls{margin-top:20px;padding-top:4px;border-top:1px solid #292929}
+
+/* comic editor cloud draft */
+.cloudButtons{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:22px}.cloudButtons button,.importButton{border:1px solid #ff2f92;background:#151515;color:#fff;padding:10px;cursor:pointer;font-weight:900}.cloudButtons button:first-child{background:#ff2f92}.cloudStatus{font-size:11px;color:#aaa;line-height:1.4;margin:8px 0}.jsonFileInput{display:none}.importButton{width:100%;margin-top:8px;border-color:#555}.importButton:hover{border-color:#ff2f92}
