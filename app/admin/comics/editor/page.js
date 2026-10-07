@@ -18,7 +18,8 @@ export default function ComicEditor() {
   const [selected, setSelected] = useState(null);
   const [previewLang, setPreviewLang] = useState("ko");
   const [tool, setTool] = useState("dialogue");
-  const stageRef = useRef(null);\n  const importRef = useRef(null);
+  const stageRef = useRef(null);
+  const importRef = useRef(null);
 
   useEffect(() => {
     const saved = localStorage.getItem("takako-comic-editor-" + episode.slug);
