@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { comicSeries, episodeImagePath } from "../../data/comics";
+import { comicSeries, episodeImagePath } from "../../../data/comics";\nimport { createClient } from "../../../../utils/supabase/client";
 
 const emptyText = { ko: "", ja: "", en: "" };
 const defaultStyle = {
@@ -111,6 +111,34 @@ export default function ComicEditor() {
       }
     };
     reader.readAsText(file);
+  }
+
+  async function saveCloud() {
+    setCloudStatus("SAVING...");
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { setCloudStatus("LOGIN REQUIRED"); return; }
+    const { error } = await supabase.from("comic_lettering").upsert({
+      owner_id: user.id,
+      series_slug: comicSeries.slug,
+      episode_slug: episode.slug,
+      data: boxes,
+      updated_at: new Date().toISOString()
+    }, { onConflict: "owner_id,series_slug,episode_slug" });
+    setCloudStatus(error ? "SAVE FAILED · " + error.message : "SAVED TO SUPABASE");
+  }
+
+  async function loadCloud() {
+    setCloudStatus("LOADING...");
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { setCloudStatus("LOGIN REQUIRED"); return; }
+    const { data, error } = await supabase.from("comic_lettering").select("data").eq("owner_id", user.id).eq("series_slug", comicSeries.slug).eq("episode_slug", episode.slug).maybeSingle();
+    if (error) { setCloudStatus("LOAD FAILED · " + error.message); return; }
+    if (!data) { setCloudStatus("NO CLOUD DRAFT YET"); return; }
+    persist(Array.isArray(data.data) ? data.data : []);
+    setSelected(null);
+    setCloudStatus("CLOUD DRAFT LOADED");
   }
 
   function exportJSON() {
