@@ -1,0 +1,1 @@
+export default function Novels(){return <main className="page"><p className="eyebrow">STORIES & SIDE STORIES</p><h1>NOVELS</h1><div className="empty">Web novel library ready for chapters.</div></main>}
