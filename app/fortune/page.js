@@ -1,1 +1,15 @@
-const items=['TODAY’S TAROT','LOVE READING','3 CARD READING','VIP PRIVATE READING']; export default function Fortune(){return <main className="page"><p className="eyebrow">AI + HUMAN READING</p><h1>FORTUNE</h1><div className="grid">{items.map((x,i)=><div className="card" key={x}><span>{x}</span><p>{i===3?'Personally reviewed VIP service':'AI-powered entertainment reading'}</p></div>)}</div></main>}
+export default function Fortune(){
+  return <main className="page fortunePortal">
+    <p className="eyebrow">CONNECTED SERVICE</p>
+    <h1>FORTUNE</h1>
+    <section className="fortuneGateway">
+      <div>
+        <p className="eyebrow">MAID¥SAMA TAROT</p>
+        <h2>ENTER<br/>TAROT</h2>
+        <p>Takako World에서 MAID¥SAMA Tarot로 이동합니다.</p>
+        <a className="primary" href="https://maidysama-tarot.vercel.app/" target="_blank" rel="noopener noreferrer">ENTER TAROT ↗</a>
+      </div>
+      <div className="fortuneSigil" aria-hidden="true">✦<span>🔮</span>✦</div>
+    </section>
+  </main>
+}
