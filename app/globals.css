@@ -15,3 +15,20 @@
 .comicPart>img{display:block;width:100%;height:auto}
 .dialogueLayer{position:absolute;z-index:2;transform:translateZ(0);line-height:1.25;text-align:center;color:#111;font-weight:700;font-size:clamp(11px,2vw,18px);overflow-wrap:anywhere}
 @media(max-width:760px){.languageTabs{top:0}.dialogueLayer{font-size:clamp(10px,3.2vw,16px)}}
+
+
+/* Takako comic dialogue editor */
+.comicEditor{min-height:100vh;display:grid;grid-template-columns:330px minmax(0,1fr);background:#090909}
+.editorPanel{position:sticky;top:0;height:100vh;overflow:auto;padding:28px 24px;background:#0d0d0d;border-right:1px solid #292929;z-index:30}
+.editorPanel h1{font-size:48px;line-height:.82;margin:14px 0 22px;letter-spacing:-.05em}
+.editorPanel>a,.editorPanel small{color:#777;font-size:11px}.editorHelp,.editorHint{color:#999;line-height:1.55;font-size:13px}
+.editorPanel label{display:block;margin:18px 0 7px;color:#888;font-size:10px;letter-spacing:.12em}
+.editorPanel select,.editorPanel textarea{width:100%;background:#151515;color:#fff;border:1px solid #333;padding:10px;font:inherit}
+.editorPanel textarea{min-height:72px;resize:vertical}.editorPanel input[type=range]{width:100%}
+.editorLangs{display:flex;gap:6px;margin:18px 0}.editorLangs button,.exportButton,.dangerButton{border:1px solid #333;background:#151515;color:#aaa;padding:9px 11px;cursor:pointer}
+.editorLangs button.active{background:#ff2f92;color:#fff;border-color:#ff2f92}.exportButton{width:100%;margin:22px 0 9px;background:#ff2f92;border-color:#ff2f92;color:#fff;font-weight:900}
+.dangerButton{width:100%;margin-top:18px}.dangerButton:hover{border-color:#ff2f92;color:#ff2f92}
+.editorWorkspace{min-width:0;padding:24px 30px 80px;overflow:auto}.editorToolbar{width:min(760px,100%);margin:0 auto 12px;display:flex;justify-content:space-between;color:#888;font-size:11px}
+.editorStage{position:relative;width:min(760px,100%);margin:auto;background:#000;cursor:crosshair;line-height:0;user-select:none}.editorStage>img{display:block;width:100%;height:auto;pointer-events:none}
+.editorBox{position:absolute;min-height:28px;padding:7px 9px;border:2px dashed #ff2f92;background:rgba(255,255,255,.9);color:#111;text-align:center;line-height:1.2;font-weight:700;font-size:clamp(10px,1.5vw,17px);cursor:grab;touch-action:none;overflow-wrap:anywhere}.editorBox.selected{outline:3px solid rgba(255,47,146,.35)}.editorBox:active{cursor:grabbing}
+@media(max-width:800px){.comicEditor{display:block}.editorPanel{position:relative;height:auto;border-right:0;border-bottom:1px solid #292929}.editorWorkspace{padding:18px 0 60px}.editorToolbar{padding:0 12px}.editorStage{width:100%}.editorBox{font-size:clamp(9px,3vw,15px)}}
