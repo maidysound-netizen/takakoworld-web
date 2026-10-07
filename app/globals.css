@@ -47,3 +47,11 @@
 
 /* comic editor cloud draft */
 .cloudButtons{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:22px}.cloudButtons button,.importButton{border:1px solid #ff2f92;background:#151515;color:#fff;padding:10px;cursor:pointer;font-weight:900}.cloudButtons button:first-child{background:#ff2f92}.cloudStatus{font-size:11px;color:#aaa;line-height:1.4;margin:8px 0}.jsonFileInput{display:none}.importButton{width:100%;margin-top:8px;border-color:#555}.importButton:hover{border-color:#ff2f92}
+
+/* admin login */
+.adminLogin{min-height:calc(100vh - 150px);display:grid;place-items:center;padding:56px 20px 90px;background:radial-gradient(circle at 50% 15%,rgba(255,47,146,.10),transparent 34%)}
+.adminLogin form{width:min(430px,100%);padding:34px;border:1px solid #2b2b2b;background:#0d0d0d;box-shadow:0 28px 90px rgba(0,0,0,.5)}
+.adminLogin h1{font-size:clamp(54px,9vw,84px);line-height:.85;letter-spacing:-.055em;margin:14px 0 18px}.adminLogin form>p:not(.eyebrow):not(.loginError){color:#888;margin:0 0 28px}
+.adminLogin label{display:block;margin:18px 0 7px;font-size:11px;letter-spacing:.14em;color:#aaa}.adminLogin input{display:block;width:100%;min-width:0;height:48px;padding:0 13px;border:1px solid #383838;background:#151515;color:#fff;border-radius:0;font:inherit;font-size:16px;outline:none}.adminLogin input:focus{border-color:#ff2f92;box-shadow:0 0 0 2px rgba(255,47,146,.12)}
+.adminLogin button{display:block;width:100%;height:48px;margin-top:24px;border:1px solid #ff2f92;background:#ff2f92;color:#fff;font:900 13px/1 Arial,Helvetica,sans-serif;letter-spacing:.12em;cursor:pointer;border-radius:0}.adminLogin button:disabled{opacity:.55;cursor:wait}.loginError{margin:14px 0 0;color:#ff6b9f;font-size:12px;line-height:1.45}
+@media(max-width:760px){.adminLogin{min-height:calc(100vh - 190px);display:block;padding:42px 18px 80px}.adminLogin form{margin:0 auto;padding:28px 22px}.adminLogin h1{font-size:58px}.adminLogin label{margin-top:17px}.adminLogin input,.adminLogin button{height:50px}}
