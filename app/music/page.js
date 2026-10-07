@@ -1,0 +1,1 @@
+export default function Music(){return <main className="page"><p className="eyebrow">TAKAKO WORLD RADIO</p><h1>MUSIC</h1><div className="player"><div className="album">♫</div><div><b>Playlist service</b><p>Albums · OST · YouTube releases</p><button disabled>▶ PLAYER COMING NEXT</button></div></div></main>}
