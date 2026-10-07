@@ -1,1 +1,1 @@
-export { default } from "../../../tools/comic-editor/page";
+export { default } from "../../../tools/comic-editor/page";\n
