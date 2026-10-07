@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { comicSeries, episodeImagePath } from "../../../data/comics";\nimport { createClient } from "../../../../utils/supabase/client";
+import { comicSeries, episodeImagePath } from "../../../data/comics";
+import { createClient } from "../../../../utils/supabase/client";
 
 const emptyText = { ko: "", ja: "", en: "" };
 const defaultStyle = {
