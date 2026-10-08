@@ -119,6 +119,36 @@ export default function ComicEditor() {
     reader.readAsText(file);
   }
 
+  async function publishEpisode() {
+    if (!boxes.length) {
+      setPublishStatus("NOTHING TO PUBLISH");
+      return;
+    }
+
+    if (!window.confirm("현재 편집본을 독자용 공개본으로 발행할까요?")) return;
+
+    setPublishStatus("PUBLISHING...");
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      setPublishStatus("LOGIN REQUIRED");
+      return;
+    }
+
+    const { error } = await supabase
+      .from("comic_lettering_published")
+      .upsert({
+        series_slug: comicSeries.slug,
+        episode_slug: episode.slug,
+        data: boxes,
+        published_by: user.id,
+        published_at: new Date().toISOString()
+      }, { onConflict: "series_slug,episode_slug" });
+
+    setPublishStatus(error ? "PUBLISH FAILED · " + error.message : "PUBLISHED");
+  }
+
   async function saveCloud() {
     setCloudStatus("SAVING...");
     const supabase = createClient();
