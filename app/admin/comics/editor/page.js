@@ -349,6 +349,13 @@ export default function ComicEditor() {
 
       <div className="cloudButtons"><button onClick={saveCloud}>SAVE DRAFT</button><button onClick={loadCloud}>LOAD DRAFT</button></div>
       {cloudStatus && <p className="cloudStatus">{cloudStatus}</p>}
+
+      <div className="publishPanel">
+        <strong>PUBLIC VERSION</strong>
+        <button className="publishButton" onClick={publishEpisode}>PUBLISH PUBLIC VERSION</button>
+        {publishStatus && <p className="publishStatus">{publishStatus}</p>}
+        <small>SAVE DRAFT는 작업본만 저장합니다. PUBLISH를 눌러야 독자용 공개본이 바뀝니다.</small>
+      </div>
       <input ref={importRef} className="jsonFileInput" type="file" accept=".json,application/json" onChange={importJSONFile} />
       <button className="importButton" onClick={()=>importRef.current?.click()}>IMPORT LETTERING JSON</button>
       <button className="exportButton" onClick={exportJSON}>EXPORT LETTERING JSON</button>
