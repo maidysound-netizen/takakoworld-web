@@ -31,8 +31,10 @@ export async function POST(request) {
     return NextResponse.json({ error: "EDITOR_ACCESS_REQUIRED" }, { status: 403 });
   }
 
-  if (!process.env.OPENAI_API_KEY) {
-    return NextResponse.json({ error: "OPENAI_API_KEY_MISSING" }, { status: 503 });
+  const openAIKey = process.env.OPENAI_API_KEY;
+  const vercelOidc = process.env.VERCEL_OIDC_TOKEN;
+  if (!openAIKey && !vercelOidc) {
+    return NextResponse.json({ error: "AI_AUTH_MISSING" }, { status: 503 });
   }
 
   let body;
@@ -101,14 +103,21 @@ export async function POST(request) {
     required: ["translations"]
   };
 
-  const apiResponse = await fetch("https://api.openai.com/v1/responses", {
+  const useGateway = !openAIKey && !!vercelOidc;
+  const endpoint = useGateway
+    ? "https://ai-gateway.vercel.sh/v1/responses"
+    : "https://api.openai.com/v1/responses";
+  const model = process.env.OPENAI_TRANSLATION_MODEL ||
+    (useGateway ? "openai/gpt-5.6-luna" : "gpt-5.6-luna");
+
+  const apiResponse = await fetch(endpoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": "Bearer " + process.env.OPENAI_API_KEY
+      "Authorization": "Bearer " + (openAIKey || vercelOidc)
     },
     body: JSON.stringify({
-      model: process.env.OPENAI_TRANSLATION_MODEL || "gpt-5.6-luna",
+      model,
       instructions,
       input: JSON.stringify({ items }),
       text: {
@@ -155,6 +164,7 @@ export async function POST(request) {
   return NextResponse.json({
     translations,
     translated: translations.length,
-    model: process.env.OPENAI_TRANSLATION_MODEL || "gpt-5.6-luna"
+    model,
+    provider: useGateway ? "vercel-ai-gateway" : "openai"
   });
 }
