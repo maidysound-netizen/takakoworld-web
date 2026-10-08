@@ -108,7 +108,7 @@ export async function POST(request) {
       "Authorization": "Bearer " + process.env.OPENAI_API_KEY
     },
     body: JSON.stringify({
-      model: process.env.OPENAI_TRANSLATION_MODEL || "gpt-6-luna",
+      model: process.env.OPENAI_TRANSLATION_MODEL || "gpt-5.6-luna",
       instructions,
       input: JSON.stringify({ items }),
       text: {
@@ -155,6 +155,6 @@ export async function POST(request) {
   return NextResponse.json({
     translations,
     translated: translations.length,
-    model: process.env.OPENAI_TRANSLATION_MODEL || "gpt-6-luna"
+    model: process.env.OPENAI_TRANSLATION_MODEL || "gpt-5.6-luna"
   });
 }
