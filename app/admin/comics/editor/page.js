@@ -173,19 +173,30 @@ export default function ComicEditor() {
     }
 
     try {
-      const response = await fetch("/api/admin/comics/translate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items, notes: translationNotes })
-      });
-      const payload = await response.json();
+      const translated = new Map();
+      const batchSize = 50;
+      const totalBatches = Math.ceil(items.length / batchSize);
 
-      if (!response.ok) {
-        setTranslateStatus("TRANSLATE FAILED · " + (payload?.error || response.status));
-        return;
+      for (let i = 0; i < items.length; i += batchSize) {
+        const batch = items.slice(i, i + batchSize);
+        const batchNumber = Math.floor(i / batchSize) + 1;
+        setTranslateStatus("TRANSLATING · " + batchNumber + "/" + totalBatches);
+
+        const response = await fetch("/api/admin/comics/translate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ items: batch, notes: translationNotes })
+        });
+        const payload = await response.json();
+
+        if (!response.ok) {
+          setTranslateStatus("TRANSLATE FAILED · " + (payload?.error || response.status));
+          return;
+        }
+
+        for (const item of payload.translations || []) translated.set(item.id, item);
       }
 
-      const translated = new Map((payload.translations || []).map((item) => [item.id, item]));
       const next = boxes.map((b) => {
         const tr = translated.get(b.id);
         if (!tr) return b;
@@ -200,7 +211,11 @@ export default function ComicEditor() {
       });
 
       persist(next);
-      setTranslateStatus("TRANSLATED · " + translated.size + " ITEM" + (translated.size === 1 ? "" : "S"));
+      const missing = items.length - translated.size;
+      setTranslateStatus(
+        "TRANSLATED · " + translated.size + " ITEM" + (translated.size === 1 ? "" : "S") +
+        (missing > 0 ? " · " + missing + " STILL EMPTY" : "")
+      );
     } catch (error) {
       setTranslateStatus("TRANSLATE FAILED · NETWORK ERROR");
     }
