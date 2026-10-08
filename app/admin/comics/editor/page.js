@@ -22,6 +22,7 @@ export default function ComicEditor() {
   const importRef = useRef(null);
   const [cloudStatus, setCloudStatus] = useState("");
   const [translateStatus, setTranslateStatus] = useState("");
+  const [publishStatus, setPublishStatus] = useState("");
   const [translationNotes, setTranslationNotes] = useState("");
 
   useEffect(() => {
