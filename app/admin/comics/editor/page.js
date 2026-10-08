@@ -21,6 +21,8 @@ export default function ComicEditor() {
   const stageRef = useRef(null);
   const importRef = useRef(null);
   const [cloudStatus, setCloudStatus] = useState("");
+  const [translateStatus, setTranslateStatus] = useState("");
+  const [translationNotes, setTranslationNotes] = useState("");
 
   useEffect(() => {
     const saved = localStorage.getItem("takako-comic-editor-" + episode.slug);
@@ -144,6 +146,66 @@ export default function ComicEditor() {
     setCloudStatus("CLOUD DRAFT LOADED");
   }
 
+  async function translateScope(scope) {
+    setTranslateStatus("TRANSLATING...");
+
+    let targetBoxes = boxes;
+    if (scope === "selected") {
+      targetBoxes = selected ? boxes.filter((b) => b.id === selected) : [];
+    } else if (scope === "image") {
+      targetBoxes = boxes.filter((b) => b.image === image);
+    }
+
+    const items = targetBoxes
+      .filter((b) => !b.universal && b.text?.ko?.trim() && (!b.text?.ja?.trim() || !b.text?.en?.trim()))
+      .map((b) => ({
+        id: b.id,
+        type: b.type,
+        universal: !!b.universal,
+        ko: b.text.ko,
+        ja: b.text.ja || "",
+        en: b.text.en || ""
+      }));
+
+    if (!items.length) {
+      setTranslateStatus(scope === "selected" && !selected ? "SELECT A LETTERING BOX" : "NOTHING TO TRANSLATE");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/admin/comics/translate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items, notes: translationNotes })
+      });
+      const payload = await response.json();
+
+      if (!response.ok) {
+        setTranslateStatus("TRANSLATE FAILED · " + (payload?.error || response.status));
+        return;
+      }
+
+      const translated = new Map((payload.translations || []).map((item) => [item.id, item]));
+      const next = boxes.map((b) => {
+        const tr = translated.get(b.id);
+        if (!tr) return b;
+        return {
+          ...b,
+          text: {
+            ...b.text,
+            ja: b.text?.ja?.trim() ? b.text.ja : (tr.ja || ""),
+            en: b.text?.en?.trim() ? b.text.en : (tr.en || "")
+          }
+        };
+      });
+
+      persist(next);
+      setTranslateStatus("TRANSLATED · " + translated.size + " ITEM" + (translated.size === 1 ? "" : "S"));
+    } catch (error) {
+      setTranslateStatus("TRANSLATE FAILED · NETWORK ERROR");
+    }
+  }
+
   function exportJSON() {
     const payload = JSON.stringify(boxes, null, 2);
     navigator.clipboard?.writeText(payload);
@@ -221,6 +283,23 @@ export default function ComicEditor() {
         </div>}
         <button className="dangerButton" onClick={removeCurrent}>DELETE {current.type === "sfx" ? "SFX" : "DIALOGUE"}</button>
       </div> : <p className="editorHint">{tool==="sfx"?"효과음을 넣을 위치를 클릭하세요.":"말풍선 안을 클릭하세요."}</p>}
+
+      <div className="translatePanel">
+        <strong>AI TRANSLATION · KO → JA / EN</strong>
+        <textarea
+          className="translationNotes"
+          value={translationNotes}
+          onChange={(e)=>setTranslationNotes(e.target.value)}
+          placeholder="선택사항: 타카코는 반말, 특정 캐릭터는 존댓말 등 작품 말투 규칙"
+        />
+        <div className="translateButtons">
+          <button onClick={()=>translateScope("selected")}>TRANSLATE SELECTED</button>
+          <button onClick={()=>translateScope("image")}>TRANSLATE IMAGE</button>
+          <button onClick={()=>translateScope("episode")}>TRANSLATE EPISODE</button>
+        </div>
+        {translateStatus && <p className="translateStatus">{translateStatus}</p>}
+        <small>빈 JA/EN만 채웁니다. 기존 번역과 UNIVERSAL SFX는 덮어쓰지 않습니다.</small>
+      </div>
 
       <div className="cloudButtons"><button onClick={saveCloud}>SAVE DRAFT</button><button onClick={loadCloud}>LOAD DRAFT</button></div>
       {cloudStatus && <p className="cloudStatus">{cloudStatus}</p>}
