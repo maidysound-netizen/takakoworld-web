@@ -13,12 +13,9 @@ export async function requireEditorAccess(){
     .eq("id", user.id)
     .maybeSingle();
 
-  // Migration-safe fallback: while the profiles table is not installed yet,
-  // preserve the existing authenticated-admin workflow. Once profiles exists,
-  // only editor/admin may continue.
-  if (error) return { supabase, user, role: "legacy-authenticated" };
+  if (error || !profile) redirect("/admin/forbidden");
 
-  const role = profile?.role || "user";
+  const role = profile.role;
   if (!["editor", "admin"].includes(role)) redirect("/admin/forbidden");
 
   return { supabase, user, role };
